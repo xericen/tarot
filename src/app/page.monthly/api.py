@@ -8,6 +8,12 @@ Cards = wiz.model("db/tarott/tarot_cards")
 
 import os
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+if not GEMINI_API_KEY:
+    try:
+        GEMINI_API_KEY = open("/opt/app/data/gemini_key.txt").read().strip()
+        os.environ["GEMINI_API_KEY"] = GEMINI_API_KEY
+    except Exception:
+        pass
 _ai_client = genai.Client(api_key=GEMINI_API_KEY)
 
 TAROT_CARDS = [

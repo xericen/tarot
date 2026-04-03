@@ -34,6 +34,12 @@ TAROT_CARDS = [
 
 import os
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
+if not GEMINI_API_KEY:
+    try:
+        GEMINI_API_KEY = open("/opt/app/data/gemini_key.txt").read().strip()
+        os.environ["GEMINI_API_KEY"] = GEMINI_API_KEY
+    except Exception:
+        pass
 _ai_client = genai.Client(api_key=GEMINI_API_KEY)
 
 def _save_history(cards_str, summary="", card_ids="", result_data=""):
