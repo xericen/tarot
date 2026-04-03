@@ -1,0 +1,12 @@
+{
+    "mode": "page",
+    "id": "page.monthly",
+    "title": "monthly tarot",
+    "namespace": "monthly",
+    "viewuri": "/tarotM/:page",
+    "category": "",
+    "controller": "member",
+    "layout": "layout.navbar",
+    "preview": "/tarotM/wiz",
+    "template": "wiz-page-monthly()"
+}

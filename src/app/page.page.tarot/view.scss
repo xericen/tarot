@@ -1,0 +1,331 @@
+:host {
+  display: block;
+  height: 100%;
+  background: #f7f7fb;
+}
+
+.tarot-daily {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+/* Hero */
+.tarot-daily__hero {
+  text-align: center;
+  padding-top: 32px;
+}
+
+.tarot-daily__badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #7c3aed, #ec4899);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 18px;
+  border-radius: 100px;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+.tarot-daily__title {
+  font-size: 32px;
+  font-weight: 900;
+  color: #111;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.tarot-daily__title2 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #7c3aed;
+  margin: 0 0 12px;
+}
+
+.tarot-daily__hero-icon {
+  margin: 20px 0 16px;
+  text-align: center;
+}
+
+.tarot-daily__hero-emoji {
+  font-size: 120px;
+  line-height: 1;
+  display: inline-block;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.08));
+}
+
+.tarot-daily__desc {
+  font-size: 14px;
+  color: #666;
+  margin: 0 0 4px;
+  line-height: 1.6;
+}
+
+.tarot-daily__desc2 {
+  font-size: 14px;
+  color: #999;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Form */
+.tarot-daily__form {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.tarot-daily__panel {
+  width: 100%;
+  max-width: 360px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.tarot-daily__label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.tarot-daily__input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: #a78bfa;
+  }
+}
+
+.tarot-daily__btn--primary {
+  width: 100%;
+  margin-top: 16px;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.3);
+  transition: transform 0.1s, opacity 0.15s;
+
+  &:active { transform: translateY(1px); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.tarot-daily__btn--secondary {
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #7c3aed;
+  background: #f0ebff;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+
+  &:disabled { opacity: 0.5; }
+}
+
+/* Loading */
+.tarot-daily__loading {
+  text-align: center;
+  padding: 80px 20px;
+
+  p { font-size: 15px; color: #7c3aed; font-weight: 600; margin-top: 16px; }
+}
+
+.tarot-daily__spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e9e5f5;
+  border-top-color: #7c3aed;
+  border-radius: 50%;
+  margin: 0 auto;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Result */
+.tarot-daily__result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 24px;
+}
+
+.tarot-daily__result-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  text-align: center;
+  position: relative;
+}
+
+.tarot-daily__result-img {
+  width: 100%;
+  max-width: 220px;
+  height: auto;
+  border-radius: 14px;
+  display: block;
+  margin: 0 auto 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+
+  &.reversed {
+    transform: rotate(180deg);
+  }
+}
+
+.tarot-daily__reversed-badge {
+  display: block;
+  width: fit-content;
+  margin: 0 auto 8px;
+  background: linear-gradient(135deg, #dc2626, #9333ea);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: 100px;
+  letter-spacing: 1px;
+}
+
+.tarot-daily__result-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111;
+  margin: 0 0 4px;
+}
+
+.tarot-daily__result-subtitle {
+  font-size: 13px;
+  color: #888;
+  margin: 0;
+}
+
+/* Keywords */
+.tarot-daily__keywords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 16px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.tarot-daily__keyword {
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 100px;
+}
+
+/* Sections */
+.tarot-daily__sections {
+  width: 100%;
+  max-width: 420px;
+  margin-top: 16px;
+}
+
+.tarot-daily__section {
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+}
+
+.tarot-daily__section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #7c3aed;
+  margin-bottom: 8px;
+}
+
+.tarot-daily__section-body {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+/* One Word */
+.tarot-daily__oneword {
+  width: 100%;
+  max-width: 420px;
+  margin-top: 16px;
+  background: #fdf8f0;
+  border-radius: 16px;
+  padding: 20px;
+  border-left: 4px solid #d4a853;
+}
+
+.tarot-daily__oneword-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #b8860b;
+  margin-bottom: 10px;
+}
+
+.tarot-daily__oneword-text {
+  font-size: 15px;
+  color: #333;
+  line-height: 1.8;
+  margin: 0;
+}
+
+.tarot-daily__action {
+  width: 100%;
+  max-width: 420px;
+  margin-top: 24px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .tarot-daily { padding: 16px 16px 48px; }
+  .tarot-daily__title { font-size: 26px; }
+  .tarot-daily__title2 { font-size: 22px; }
+  .tarot-daily__hero-emoji { font-size: 80px; }
+}
+
+/* Chat Button */
+.tarot-daily__btn--chat {
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #7c3aed, #ec4899);
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.25);
+  text-decoration: none;
+  display: block;
+  text-align: center;
+  transition: transform 0.1s;
+
+  &:active { transform: translateY(1px); }
+}

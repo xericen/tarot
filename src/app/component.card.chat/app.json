@@ -1,0 +1,10 @@
+{
+    "mode": "component",
+    "id": "component.card.chat",
+    "title": "card.chat",
+    "namespace": "card.chat",
+    "viewuri": "card.chat",
+    "category": "",
+    "controller": "base",
+    "template": "wiz-component-card-chat([cardData]=\"\")"
+}

@@ -1,0 +1,14 @@
+.app-nav
+  a.app-nav__home([routerLink]="isLoggedIn ? '/main/user' : '/login'")
+    img.app-nav__logo(src="/assets/images/tarot.png", alt="SeasonTarot")
+    span.app-nav__brand SeasonTarot
+  .app-nav__actions
+    a.app-nav__user(*ngIf="isLoggedIn", routerLink="/profile")
+      span.app-nav__user-name {{ userName }}
+      svg(xmlns="http://www.w3.org/2000/svg", width="18", height="18", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2", stroke-linecap="round", stroke-linejoin="round")
+        path(d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2")
+        circle(cx="12", cy="7", r="4")
+    a.app-nav__login(*ngIf="!isLoggedIn", routerLink="/login")
+      svg(xmlns="http://www.w3.org/2000/svg", width="20", height="20", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2", stroke-linecap="round", stroke-linejoin="round")
+        path(d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2")
+        circle(cx="12", cy="7", r="4")

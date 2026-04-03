@@ -1,0 +1,18 @@
+{
+    "title": "empty",
+    "mode": "layout",
+    "namespace": "empty",
+    "category": "theme",
+    "id": "layout.empty",
+    "ng.build": {
+        "id": "layout.empty",
+        "name": "LayoutEmptyComponent",
+        "path": "./layout.empty/layout.empty.component"
+    },
+    "ng": {
+        "selector": "wiz-layout-empty",
+        "inputs": [],
+        "outputs": []
+    },
+    "template": "wiz-layout-empty()"
+}

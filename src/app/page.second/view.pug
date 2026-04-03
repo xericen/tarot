@@ -1,0 +1,22 @@
+.aitarot
+  .aitarot__hero
+    .aitarot__badge AI TAROT
+    h1.aitarot__title AI 타로
+    h2.aitarot__title2 리더 선택
+    .aitarot__hero-icon
+      span.aitarot__hero-emoji 🤖
+    p.aitarot__desc AI 타로 카드 해석을 통해
+    p.aitarot__desc 당신의 운명을 발견하세요
+
+  .aitarot__reader
+    .aitarot__reader-card
+      .aitarot__reader-img
+        img(src="/assets/AiCard/Lucario.png", alt="루카리오")
+      .aitarot__reader-info
+        .aitarot__reader-badge TAROT READER
+        h3.aitarot__reader-name 루카리오
+        p.aitarot__reader-desc 신비로운 영감으로 당신의 카드를 해석하는 AI 타로 리더
+      button.aitarot__btn--primary([routerLink]="'/Lchat/user'") 이 리더 선택하기
+
+ng-container
+  wiz-component-related

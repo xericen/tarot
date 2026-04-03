@@ -1,0 +1,22 @@
+{
+    "title": "\ud504\ub85c\ud544",
+    "mode": "page",
+    "namespace": "profile",
+    "category": "general",
+    "id": "page.profile",
+    "viewuri": "/profile",
+    "layout": "layout.navbar",
+    "controller": "member",
+    "preview": "/profile",
+    "ng.build": {
+        "id": "page.profile",
+        "name": "PageProfileComponent",
+        "path": "./page.profile/page.profile.component"
+    },
+    "ng": {
+        "selector": "wiz-page-profile",
+        "inputs": [],
+        "outputs": []
+    },
+    "template": "wiz-page-profile()"
+}

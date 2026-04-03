@@ -1,0 +1,10 @@
+{
+    "mode": "component",
+    "id": "component.related",
+    "title": "related",
+    "namespace": "related",
+    "viewuri": "",
+    "category": "",
+    "template": "wiz-component-related([title]=\"\")",
+    "controller": "base"
+}

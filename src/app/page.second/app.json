@@ -1,0 +1,12 @@
+{
+    "mode": "page",
+    "id": "page.second",
+    "title": "AItarot Page",
+    "namespace": "second",
+    "viewuri": "/AItarot/:id?",
+    "category": "general",
+    "preview": "/AItarot/user",
+    "controller": "member",
+    "layout": "layout.navbar",
+    "template": "wiz-page-second([title]=\"\")"
+}

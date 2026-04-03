@@ -1,0 +1,73 @@
+.app-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.app-nav__home {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.app-nav__logo {
+  height: 28px;
+  width: auto;
+}
+
+.app-nav__brand {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111;
+}
+
+.app-nav__actions {
+  display: flex;
+  align-items: center;
+}
+
+.app-nav__login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f5f3ff;
+  color: #7c3aed;
+  text-decoration: none;
+  transition: background 0.15s;
+
+  &:active {
+    background: #ede9fe;
+  }
+}
+
+.app-nav__user {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  background: #f5f3ff;
+  color: #7c3aed;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s;
+
+  &:active {
+    background: #ede9fe;
+  }
+}
+
+.app-nav__user-name {
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -1,0 +1,62 @@
+.tarot-main
+  .tarot-main__hero
+    .tarot-main__badge AI TAROT
+    h1.tarot-main__title SEASON
+    h2.tarot-main__subtitle TAROT
+    .tarot-main__card-wrap
+      img.tarot-main__card-img(src="/assets/images/CardB.png", alt="타로 카드")
+    p.tarot-main__desc 당신의 운명을 AI가 해석해 드립니다
+    p.tarot-main__desc2 타로 카드를 통해 사랑, 직업, 미래를 확인하세요
+
+  .tarot-main__action
+    button.tarot-main__btn(type="button", [routerLink]="'/AItarot/user'")
+      span AI 점 보기 시작
+      svg(xmlns="http://www.w3.org/2000/svg", width="20", height="20", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2", stroke-linecap="round", stroke-linejoin="round")
+        line(x1="5", y1="12", x2="19", y2="12")
+        polyline(points="12 5 19 12 12 19")
+
+  .tarot-main__menu
+    .tarot-main__menu-item([routerLink]="'/tarot/user'")
+      .tarot-main__menu-icon 🔮
+      .tarot-main__menu-text
+        .tarot-main__menu-title 일일 타로 운세
+        .tarot-main__menu-desc 오늘 하루의 운세를 확인하세요
+      .tarot-main__menu-arrow
+        svg(xmlns="http://www.w3.org/2000/svg", width="16", height="16", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2", stroke-linecap="round", stroke-linejoin="round")
+          polyline(points="9 18 15 12 9 6")
+
+    .tarot-main__menu-item([routerLink]="'/tarotT/user'")
+      .tarot-main__menu-icon ✨
+      .tarot-main__menu-text
+        .tarot-main__menu-title 오늘의 타로
+        .tarot-main__menu-desc AI가 오늘의 카드를 해석합니다
+      .tarot-main__menu-arrow
+        svg(xmlns="http://www.w3.org/2000/svg", width="16", height="16", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2", stroke-linecap="round", stroke-linejoin="round")
+          polyline(points="9 18 15 12 9 6")
+
+    .tarot-main__menu-item([routerLink]="'/tarotP/user'")
+      .tarot-main__menu-icon 🃏
+      .tarot-main__menu-text
+        .tarot-main__menu-title Season 카드
+        .tarot-main__menu-desc 과거·현재·미래 3장 스프레드
+      .tarot-main__menu-arrow
+        svg(xmlns="http://www.w3.org/2000/svg", width="16", height="16", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2", stroke-linecap="round", stroke-linejoin="round")
+          polyline(points="9 18 15 12 9 6")
+
+    .tarot-main__menu-item([routerLink]="'/tarotw/user'")
+      .tarot-main__menu-icon 🌸
+      .tarot-main__menu-text
+        .tarot-main__menu-title 연간 타로 운세
+        .tarot-main__menu-desc {{ currentYear }}년 사계절 운세를 확인하세요
+      .tarot-main__menu-arrow
+        svg(xmlns="http://www.w3.org/2000/svg", width="16", height="16", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2", stroke-linecap="round", stroke-linejoin="round")
+          polyline(points="9 18 15 12 9 6")
+
+    .tarot-main__menu-item([routerLink]="'/tarotM/user'")
+      .tarot-main__menu-icon 📅
+      .tarot-main__menu-text
+        .tarot-main__menu-title 월간 타로 운세
+        .tarot-main__menu-desc 이번 달의 운세를 확인하세요
+      .tarot-main__menu-arrow
+        svg(xmlns="http://www.w3.org/2000/svg", width="16", height="16", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2", stroke-linecap="round", stroke-linejoin="round")
+          polyline(points="9 18 15 12 9 6")

@@ -1,0 +1,22 @@
+{
+    "title": "tarot Page",
+    "mode": "page",
+    "namespace": "page.tarot",
+    "category": "general",
+    "id": "page.page.tarot",
+    "ng.build": {
+        "id": "page.xyz",
+        "name": "PageXyzComponent",
+        "path": "./page.xyz/page.xyz.component"
+    },
+    "layout": "layout.navbar",
+    "viewuri": "/tarot/:page",
+    "ng": {
+        "selector": "wiz-page-xyz",
+        "inputs": [],
+        "outputs": []
+    },
+    "template": "wiz-page-page-tarot()",
+    "preview": "/tarot/wiz",
+    "controller": "member"
+}

@@ -1,0 +1,36 @@
+.card-chat
+  // 토글 버튼
+  button.card-chat__toggle((click)="toggleChat()")
+    span(*ngIf="!isOpen") 🔮 이 카드에 대해 더 물어보기
+    span(*ngIf="isOpen") ✕ 채팅 닫기
+
+  // 채팅 패널
+  .card-chat__panel(*ngIf="isOpen")
+    .card-chat__header
+      span.card-chat__header-icon 🔮
+      span.card-chat__header-title 카드 AI 상담
+
+    .card-chat__body(#chatBody="")
+      ng-container(*ngFor="let msg of messages")
+        .card-chat__msg.card-chat__msg--bot(*ngIf="msg.role === 'bot'")
+          .card-chat__avatar 🔮
+          .card-chat__bubble {{ msg.text }}
+        .card-chat__msg.card-chat__msg--user(*ngIf="msg.role === 'user'")
+          .card-chat__bubble {{ msg.text }}
+
+      .card-chat__typing(*ngIf="isLoading")
+        .card-chat__avatar 🔮
+        .card-chat__bubble
+          .card-chat__dots
+            span
+            span
+            span
+
+    .card-chat__footer
+      input.card-chat__input(#chatInput="",
+        type="text",
+        [(ngModel)]="inputText",
+        placeholder="카드에 대해 질문해보세요...",
+        (keyup.enter)="sendMessage()",
+        [disabled]="isLoading")
+      button.card-chat__send((click)="sendMessage()", [disabled]="isLoading") ↑

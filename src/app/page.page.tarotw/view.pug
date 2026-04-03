@@ -1,0 +1,124 @@
+.tarot-yearly
+  // 히어로 (Step 1에서만 표시)
+  .tarot-yearly__hero(*ngIf="!showCards && !isResultView")
+    .tarot-yearly__badge YEARLY TAROT
+    h1.tarot-yearly__title {{ currentYear }}년 타로
+    h2.tarot-yearly__title2 운세
+    .tarot-yearly__hero-icon
+      span.tarot-yearly__hero-emoji 🌸
+    p.tarot-yearly__desc 일 년의 운세를 탐색하고 맞춤형 타로 가이드를 받아보세요
+    p.tarot-yearly__desc2 사랑, 경력, 건강 등 삶의 여러 측면에 대한 통찰을 얻을 수 있습니다
+
+  // 입력 폼 (Step 1에서만 표시)
+  .tarot-yearly__form(*ngIf="!isResultView && !showCards")
+    .tarot-yearly__panel
+      label.tarot-yearly__label 이름을 입력해주세요
+      input.tarot-yearly__input(type="text",
+        [(ngModel)]="userName",
+        (input)="service.render()",
+        placeholder="당신의 이름",
+        [disabled]="isLocked")
+
+      label.tarot-yearly__label 연애 상태를 선택해주세요
+      select.tarot-yearly__input([(ngModel)]="loveStatus", [disabled]="isLocked")
+        option(value="", disabled="", selected="") 선택하세요
+        option(value="싱글") 싱글
+        option(value="연애 중") 연애 중
+        option(value="이혼") 썸
+
+      label.tarot-yearly__label 직업 상태를 선택해주세요
+      select.tarot-yearly__input([(ngModel)]="jobStatus", [disabled]="isLocked")
+        option(value="", disabled="", selected="") 선택하세요
+        option(value="학생") 학생
+        option(value="직장인") 직장인
+        option(value="프리랜서") 프리랜서
+        option(value="사업가") 사업가
+        option(value="구직중") 구직중
+
+      button.tarot-yearly__btn--primary(*ngIf="canShowCardButton && !showCards",
+        (click)="startCardSelection()") 카드 선택하기
+
+  // 카드 영역 (Step 2)
+  .tarot-yearly__cards(*ngIf="showCards && !isResultView")
+    .tarot-yearly__user-summary
+      span.tarot-yearly__user-summary-name {{ userName }}
+      span.tarot-yearly__user-summary-info ({{ loveStatus }} / {{ jobStatus }})
+
+    .tarot-yearly__toolbar
+      button.tarot-yearly__btn--secondary((click)="shuffleCards()") 카드 섞기
+
+    .card-container
+      .card-wrapper(*ngFor="let card of tarotCards; let i = index",
+        [class.spread]="isSpread",
+        [class.shuffling]="isShuffling",
+        [class.gathering]="isGathering",
+        [class.selected]="flippedCards[i]",
+
+        [style.transitionDelay]="isSpread ? (i * 0.03) + 's' : '0s'",
+        (click)="selectCard(i)")
+        img.card([src]="flippedCards[i] ? '/assets/TarotCard/' + card + '.jpg' : '/assets/images/CardB.png'",
+          [class.reversed]="flippedCards[i] && reversedCards[i]",
+          alt="타로 카드")
+
+
+    .tarot-yearly__slots
+      .tarot-yearly__slot(*ngFor="let slot of [0,1,2,3]; let i = index")
+        img(*ngIf="selectedCards[i] !== null",
+          [src]="getCardImage(i)",
+          [class.reversed]="selectedReversed[i]",
+          [alt]="'선택 카드 ' + (i+1)")
+        span.tarot-yearly__slot-label(*ngIf="selectedCards[i] === null") {{ ['봄','여름','가을','겨울'][i] }}
+
+    .tarot-yearly__confirm(*ngIf="canComplete && !isLoading")
+      button.tarot-yearly__btn--primary((click)="completeSelection()") 완료
+
+    .tarot-yearly__loading(*ngIf="isLoading")
+      .tarot-yearly__spinner
+      p AI가 운세를 분석 중입니다...
+
+  // 안내 (카드 선택 전)
+  .tarot-yearly__guide(*ngIf="!showCards && !isResultView")
+    h3.tarot-yearly__guide-title {{ currentYear }}년 타로 운세 보는 방법
+    .tarot-yearly__steps
+      .tarot-yearly__step
+        .tarot-yearly__step-num 1
+        .tarot-yearly__step-text
+          .tarot-yearly__step-title 기본 정보 입력
+          .tarot-yearly__step-desc 연애 상태와 직업 정보를 입력해 주세요
+
+      .tarot-yearly__step
+        .tarot-yearly__step-num 2
+        .tarot-yearly__step-text
+          .tarot-yearly__step-title 타로 카드 뽑기
+          .tarot-yearly__step-desc 분기별 운세 카드를 신중하게 선택해 주세요
+
+      .tarot-yearly__step
+        .tarot-yearly__step-num 3
+        .tarot-yearly__step-text
+          .tarot-yearly__step-title AI 맞춤 해석
+          .tarot-yearly__step-desc AI가 개인 정보와 카드를 바탕으로 해석해 드립니다
+
+  // 결과
+  .tarot-yearly__result(*ngIf="isResultView")
+    .tarot-yearly__result-header
+      .tarot-yearly__result-badge {{ currentYear }}년 사계절 운세
+      p.tarot-yearly__result-sub {{ userName }}님의 맞춤 AI 타로 운세입니다
+
+    .tarot-yearly__result-list
+      .tarot-yearly__result-item(*ngFor="let result of finalResults")
+        .tarot-yearly__result-item-header
+          .tarot-yearly__result-img-wrap
+            span.tarot-yearly__reversed-badge(*ngIf="result.is_reversed") Reversed
+            img([src]="'/assets/TarotCard/' + result.card_id + '.jpg'", [class.reversed]="result.is_reversed")
+          .tarot-yearly__result-item-meta
+            .tarot-yearly__result-item-season {{ result.season }}
+            .tarot-yearly__result-item-name {{ result.card_name }}
+        p.tarot-yearly__result-item-msg {{ result.message }}
+
+    .tarot-yearly__result-action
+      button.tarot-yearly__btn--secondary((click)="resetSelection()") 다시 보기
+
+    wiz-component-card-chat([cardData]="cardData")
+
+ng-container
+  wiz-component-related

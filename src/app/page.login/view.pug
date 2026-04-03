@@ -1,0 +1,148 @@
+.login-page(*ngIf="loaded")
+  .login-bg
+    .login-bg__circle
+  .login-card
+    .login-card__header
+      img.login-card__logo(src="/assets/images/seasontarot.png", alt="Season Tarot")
+      p.login-card__subtitle(*ngIf="!showSignup && !showResetPassword") 로그인
+      p.login-card__subtitle(*ngIf="showSignup") 회원가입
+      p.login-card__subtitle(*ngIf="showResetPassword") 비밀번호 찾기
+
+    // 로그인 폼
+    .login-card__form(*ngIf="!showSignup && !showResetPassword")
+      .login-card__field
+        input.login-card__input(type="email",
+          placeholder="이메일을 입력해주세요",
+          [value]="user.email",
+          (input)="user.email = $event.target.value")
+      .login-card__field
+        input.login-card__input(type="password",
+          placeholder="비밀번호를 입력해주세요",
+          [value]="user.password",
+          (input)="user.password = $event.target.value")
+      button.login-card__btn(type="button",
+        (click)="login()") 로그인
+      .login-card__links
+        a.login-card__link(href="javascript:void(0)",
+          (click)="showResetForm()") 비밀번호 찾기
+        span.login-card__divider |
+        a.login-card__link.login-card__link--accent(href="javascript:void(0)",
+          (click)="toggleForm()") 회원가입
+
+    // 회원가입 폼
+    .login-card__form(*ngIf="showSignup && !showResetPassword")
+      .login-steps
+        .login-steps__dot([class.active]="true")
+        .login-steps__dot([class.active]="signupStep === 2")
+
+      // Step 1: 이름
+      .login-card__step(*ngIf="signupStep === 1")
+        p.login-card__step-desc 이름을 입력해주세요.
+        .login-card__field
+          label.login-card__label 이름
+          input.login-card__input(type="text",
+            placeholder="이름",
+            [value]="signupData.name",
+            (input)="signupData.name = $event.target.value")
+        .login-card__step-action
+          span.login-card__step-title 다음 단계
+          button.login-card__step-btn(type="button",
+            (click)="nextSignupStep()")
+            svg(xmlns="http://www.w3.org/2000/svg", width="20", height="20", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2", stroke-linecap="round", stroke-linejoin="round")
+              line(x1="5", y1="12", x2="19", y2="12")
+              polyline(points="12 5 19 12 12 19")
+
+      // Step 2: 이메일 + 비밀번호
+      .login-card__step(*ngIf="signupStep === 2")
+        p.login-card__step-desc 이메일과 비밀번호를 입력해주세요.
+        .login-card__field
+          label.login-card__label 이메일
+          input.login-card__input(type="email",
+            placeholder="youremail@address.com",
+            [value]="signupData.email",
+            (input)="signupData.email = $event.target.value")
+        .login-card__field
+          label.login-card__label 비밀번호
+          input.login-card__input(type="password",
+            placeholder="비밀번호를 입력해주세요",
+            [value]="signupData.password",
+            (input)="signupData.password = $event.target.value")
+        .login-card__field
+          label.login-card__label 비밀번호 확인
+          input.login-card__input(type="password",
+            placeholder="비밀번호를 다시 입력해주세요",
+            [value]="signupData.password_repeat",
+            (input)="signupData.password_repeat = $event.target.value")
+        .login-card__step-action
+          span.login-card__step-title 회원가입
+          button.login-card__step-btn(type="button",
+            (click)="signup()")
+            svg(xmlns="http://www.w3.org/2000/svg", width="20", height="20", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2", stroke-linecap="round", stroke-linejoin="round")
+              polyline(points="20 6 9 17 4 12")
+
+      .login-card__links
+        a.login-card__link(*ngIf="signupStep !== 1",
+          href="javascript:void(0)",
+          (click)="prevSignupStep()") 이전 단계
+        a.login-card__link(*ngIf="signupStep === 1",
+          href="javascript:void(0)",
+          (click)="toggleForm()") 로그인으로 돌아가기
+
+    // 비밀번호 찾기 폼
+    .login-card__form(*ngIf="showResetPassword")
+      .login-steps
+        .login-steps__dot([class.active]="true")
+        .login-steps__dot([class.active]="resetStep === 2")
+
+      // Step 1: 이름 + 이메일
+      .login-card__step(*ngIf="resetStep === 1")
+        p.login-card__step-desc 비밀번호를 찾기 위해 정보를 입력해주세요.
+        .login-card__field
+          label.login-card__label 이름
+          input.login-card__input(type="text",
+            placeholder="이름",
+            [value]="resetData.name",
+            (input)="resetData.name = $event.target.value")
+        .login-card__field
+          label.login-card__label 이메일
+          input.login-card__input(type="email",
+            placeholder="youremail@address.com",
+            [value]="resetData.email",
+            (input)="resetData.email = $event.target.value")
+        .login-card__step-action
+          span.login-card__step-title 다음 단계
+          button.login-card__step-btn(type="button",
+            (click)="nextResetStep()")
+            svg(xmlns="http://www.w3.org/2000/svg", width="20", height="20", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2", stroke-linecap="round", stroke-linejoin="round")
+              line(x1="5", y1="12", x2="19", y2="12")
+              polyline(points="12 5 19 12 12 19")
+
+      // Step 2: 새 비밀번호
+      .login-card__step(*ngIf="resetStep === 2")
+        p.login-card__step-desc 새 비밀번호를 설정해주세요.
+        .login-card__field
+          label.login-card__label 새 비밀번호
+          input.login-card__input(type="password",
+            placeholder="새 비밀번호를 입력해주세요",
+            [value]="resetData.new_password",
+            (input)="resetData.new_password = $event.target.value")
+        .login-card__field
+          label.login-card__label 새 비밀번호 확인
+          input.login-card__input(type="password",
+            placeholder="새 비밀번호를 다시 입력해주세요",
+            [value]="resetData.new_password_repeat",
+            (input)="resetData.new_password_repeat = $event.target.value")
+        .login-card__step-action
+          span.login-card__step-title 비밀번호 변경
+          button.login-card__step-btn(type="button",
+            (click)="resetPassword()")
+            svg(xmlns="http://www.w3.org/2000/svg", width="20", height="20", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2", stroke-linecap="round", stroke-linejoin="round")
+              polyline(points="20 6 9 17 4 12")
+
+      .login-card__links
+        a.login-card__link(*ngIf="resetStep !== 1",
+          href="javascript:void(0)",
+          (click)="prevResetStep()") 이전 단계
+        a.login-card__link(*ngIf="resetStep === 1",
+          href="javascript:void(0)",
+          (click)="backToLogin()") 로그인으로 돌아가기

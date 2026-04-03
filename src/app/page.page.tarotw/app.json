@@ -1,0 +1,12 @@
+{
+    "mode": "page",
+    "id": "page.page.tarotw",
+    "title": "tarotw Page",
+    "namespace": "page.tarotw",
+    "viewuri": "/tarotw/:page",
+    "category": "general",
+    "preview": "/tarotw/wiz",
+    "controller": "member",
+    "layout": "layout.navbar",
+    "template": "wiz-page-page-tarotw()"
+}

@@ -1,0 +1,229 @@
+.profile(*ngIf="loaded")
+  .profile__header
+    .profile__avatar
+      svg(xmlns="http://www.w3.org/2000/svg", width="32", height="32", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2", stroke-linecap="round", stroke-linejoin="round")
+        path(d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2")
+        circle(cx="12", cy="7", r="4")
+    .profile__info
+      h2.profile__name {{ userName }}
+      p.profile__email {{ userEmail }}
+    button.profile__logout((click)="logout()") 로그아웃
+
+  .profile__section
+    .profile__section-header
+      h3.profile__section-title 타로 조회 기록
+      .profile__view-toggle(*ngIf="history.length > 0")
+        button.profile__view-btn([class.active]="viewMode === 'list'",
+          (click)="setViewMode('list')") 목록
+        button.profile__view-btn([class.active]="viewMode === 'calendar'",
+          (click)="setViewMode('calendar')") 캘린더
+        button.profile__view-btn([class.active]="viewMode === 'stats'",
+          (click)="setViewMode('stats')") 통계
+
+    // 캘린더 뷰
+    .profile__calendar(*ngIf="viewMode === 'calendar' && history.length > 0")
+      .profile__cal-nav
+        button.profile__cal-arrow((click)="prevMonth()") ◀
+        span.profile__cal-month {{ calYear }}년 {{ calMonth + 1 }}월
+        button.profile__cal-arrow((click)="nextMonth()") ▶
+      .profile__cal-grid
+        .profile__cal-day-header(*ngFor="let d of ['일','월','화','수','목','금','토']") {{ d }}
+        .profile__cal-cell(*ngFor="let cell of calendarCells",
+          [class.empty]="!cell.day",
+          [class.has-record]="cell.records?.length > 0",
+          (click)="cell.records?.length ? selectCalDate(cell) : null")
+          span.profile__cal-date(*ngIf="cell.day") {{ cell.day }}
+          .profile__cal-dots(*ngIf="cell.records?.length > 0")
+            span.profile__cal-dot(*ngFor="let r of cell.records.slice(0,3)")
+      .profile__cal-detail(*ngIf="selectedCalDate")
+        .profile__cal-detail-title {{ selectedCalDate.day }}일의 기록
+        .profile__item(*ngFor="let item of selectedCalDate.records")
+          .profile__item-header
+            .profile__item-badge {{ tarotTypeMap[item.tarot_type] || item.tarot_type }}
+          .profile__item-thumbs(*ngIf="item.card_ids")
+            img.profile__item-thumb(*ngFor="let img of getCardImages(item.card_ids)",
+              [src]="img", alt="카드")
+          .profile__item-body
+            .profile__item-cards {{ item.cards }}
+
+    // 통계 뷰
+    .profile__stats(*ngIf="viewMode === 'stats'")
+      .profile__stats-filter
+        button.profile__type-btn(*ngFor="let p of statsPeriods",
+          [class.active]="statsPeriod === p.value",
+          (click)="loadStats(p.value)") {{ p.label }}
+
+      .profile__stats-loading(*ngIf="statsLoading")
+        p 통계를 불러오는 중...
+
+      ng-container(*ngIf="!statsLoading && statsData")
+        .profile__stats-total
+          span.profile__stats-total-num {{ statsData.total }}
+          span.profile__stats-total-label 회 리딩
+
+        .profile__stats-card(*ngIf="statsData.top_cards?.length > 0")
+          .profile__stats-card-title 가장 많이 뽑은 카드 Top {{ statsData.top_cards.length }}
+          .profile__stats-rank(*ngFor="let item of statsData.top_cards; let i = index")
+            span.profile__stats-rank-num {{ i + 1 }}
+            span.profile__stats-rank-name {{ item.card }}
+            span.profile__stats-rank-count {{ item.count }}회
+
+        .profile__stats-card(*ngIf="statsData.suit_distribution")
+          .profile__stats-card-title 슈트별 분포
+          .profile__stats-bar-list
+            .profile__stats-bar-item(*ngFor="let suit of suitList")
+              .profile__stats-bar-label {{ suit.name }}
+              .profile__stats-bar-track
+                .profile__stats-bar-fill([style.width.%]="suit.pct")
+              span.profile__stats-bar-val {{ suit.count }}
+
+        .profile__stats-card(*ngIf="hasMoodPatterns")
+          .profile__stats-card-title 감정별 카드 패턴
+          .profile__stats-mood(*ngFor="let mood of moodPatternList")
+            .profile__stats-mood-label {{ mood.mood }}
+            .profile__stats-mood-cards
+              span.profile__stats-mood-card(*ngFor="let c of mood.cards") {{ c.card }} ({{ c.count }})
+
+    // 리스트 뷰
+    ng-container(*ngIf="viewMode === 'list'")
+      .profile__filters(*ngIf="history.length > 0")
+        .profile__search
+          input.profile__search-input(type="text",
+            [(ngModel)]="searchText",
+            (input)="onSearchChange()",
+            placeholder="카드 이름으로 검색...")
+        .profile__type-filter
+          button.profile__type-btn(*ngFor="let type of filterTypes",
+            [class.active]="filterType === type.value",
+            (click)="setFilterType(type.value)") {{ type.label }}
+
+      .profile__empty(*ngIf="filteredHistory.length === 0 && loaded")
+        p(*ngIf="history.length === 0") 아직 타로 기록이 없습니다.
+        p(*ngIf="history.length > 0") 검색 결과가 없습니다.
+        a.profile__link(*ngIf="history.length === 0", routerLink="/main/user") 타로 보러 가기
+
+      .profile__list(*ngIf="filteredHistory.length > 0")
+        .profile__item(*ngFor="let item of paginatedHistory")
+          .profile__item-header
+            .profile__item-badge {{ tarotTypeMap[item.tarot_type] || item.tarot_type }}
+            .profile__item-date {{ item.created_at }}
+          .profile__item-thumbs(*ngIf="item.card_ids")
+            img.profile__item-thumb(*ngFor="let img of getCardImages(item.card_ids)",
+              [src]="img", alt="카드")
+          .profile__item-body
+            .profile__item-cards {{ item.cards }}
+            .profile__item-summary(*ngIf="item.result_summary") {{ item.result_summary }}
+          .profile__item-moods(*ngIf="item.mood_tags && editingMoodId !== item.id")
+            span.profile__mood-tag(*ngFor="let tag of getMoodTags(item.mood_tags)") {{ tag }}
+          .profile__item-mood-edit(*ngIf="editingMoodId === item.id")
+            .profile__mood-options
+              button.profile__mood-option(*ngFor="let opt of moodOptions",
+                [class.active]="editingMoodTags.includes(opt)",
+                (click)="toggleMoodTag(opt)") {{ opt }}
+            .profile__mood-actions
+              button.profile__mood-save((click)="saveMoodTags()") 저장
+              button.profile__mood-cancel((click)="cancelEditMood()") 취소
+          button.profile__mood-btn((click)="startEditMood(item)",
+            *ngIf="editingMoodId !== item.id") {{ item.mood_tags ? '감정 수정' : '+ 감정 태그' }}
+          button.profile__detail-btn((click)="showDetail(item)") 상세 보기
+
+      .profile__pagination(*ngIf="filteredHistory.length > pageSize")
+        button.profile__page-btn.profile__page-prev([disabled]="currentPage === 1",
+          (click)="goToPage(currentPage - 1)") ‹
+        button.profile__page-btn(*ngFor="let p of pageNumbers",
+          [class.active]="p === currentPage",
+          (click)="goToPage(p)") {{ p }}
+        button.profile__page-btn.profile__page-next([disabled]="currentPage === totalPages",
+          (click)="goToPage(currentPage + 1)") ›
+
+  // 상세 보기 모달
+  .profile__detail-overlay(*ngIf="selectedDetail", (click)="closeDetail()")
+    .profile__detail-modal((click)="$event.stopPropagation()")
+      .profile__detail-header
+        h3.profile__detail-title {{ tarotTypeMap[selectedDetail.tarot_type] || selectedDetail.tarot_type }}
+        span.profile__detail-date {{ selectedDetail.created_at }}
+        button.profile__detail-close((click)="closeDetail()") ✕
+
+      .profile__detail-loading(*ngIf="detailLoading")
+        p 불러오는 중...
+
+      .profile__detail-content(*ngIf="!detailLoading && selectedDetail.result")
+        // 일일 타로 (daily)
+        ng-container(*ngIf="selectedDetail.tarot_type === 'daily'")
+          .profile__detail-card-row
+            img.profile__detail-card-img([src]="'/assets/TarotCard/' + selectedDetail.result.card_id + '.jpg'",
+              [class.reversed]="selectedDetail.result.is_reversed")
+            .profile__detail-card-info
+              h4 {{ selectedDetail.result.card_name }}
+              p {{ selectedDetail.result.subtitle }}
+          .profile__detail-section(*ngIf="selectedDetail.result.finance")
+            .profile__detail-label 💰 금전운
+            p {{ selectedDetail.result.finance }}
+          .profile__detail-section(*ngIf="selectedDetail.result.love")
+            .profile__detail-label 💕 애정운
+            p {{ selectedDetail.result.love }}
+          .profile__detail-section(*ngIf="selectedDetail.result.health")
+            .profile__detail-label 🏃 건강운
+            p {{ selectedDetail.result.health }}
+          .profile__detail-section(*ngIf="selectedDetail.result.one_word")
+            .profile__detail-label ✦ 한마디
+            p {{ selectedDetail.result.one_word }}
+
+        // 오늘의 타로 (today)
+        ng-container(*ngIf="selectedDetail.tarot_type === 'today'")
+          .profile__detail-card-row
+            img.profile__detail-card-img([src]="'/assets/TarotCard/' + selectedDetail.result.card_id + '.jpg'",
+              [class.reversed]="selectedDetail.result.is_reversed")
+            .profile__detail-card-info
+              h4 {{ selectedDetail.result.card_name }}
+              p {{ selectedDetail.result.keyword }}
+          .profile__detail-section(*ngIf="selectedDetail.result.fortune")
+            .profile__detail-label ✨ 오늘의 운세
+            p {{ selectedDetail.result.fortune }}
+
+        // 시즌 카드 (season)
+        ng-container(*ngIf="selectedDetail.tarot_type === 'season' && selectedDetail.result.results")
+          .profile__detail-multi(*ngFor="let card of selectedDetail.result.results")
+            .profile__detail-card-row
+              img.profile__detail-card-img([src]="'/assets/TarotCard/' + card.card_id + '.jpg'",
+                [class.reversed]="card.is_reversed")
+              .profile__detail-card-info
+                h4 {{ card.label }} · {{ card.card_name }}
+                p {{ card.subtitle }}
+            .profile__detail-section(*ngIf="card.message")
+              p {{ card.message }}
+          .profile__detail-section(*ngIf="selectedDetail.result.closing_message")
+            .profile__detail-label ✦ 총평
+            p {{ selectedDetail.result.closing_message }}
+
+        // 월간 타로 (monthly)
+        ng-container(*ngIf="selectedDetail.tarot_type === 'monthly'")
+          .profile__detail-card-row
+            img.profile__detail-card-img([src]="'/assets/TarotCard/' + selectedDetail.result.card_id + '.jpg'",
+              [class.reversed]="selectedDetail.result.is_reversed")
+            .profile__detail-card-info
+              h4 {{ selectedDetail.result.card_name }}
+              p {{ selectedDetail.result.month }}
+          .profile__detail-section(*ngIf="selectedDetail.result.overview")
+            .profile__detail-label 📋 전체 운세
+            p {{ selectedDetail.result.overview }}
+          .profile__detail-section(*ngIf="selectedDetail.result.career")
+            .profile__detail-label 💼 커리어
+            p {{ selectedDetail.result.career }}
+          .profile__detail-section(*ngIf="selectedDetail.result.closing")
+            .profile__detail-label ✦ 한마디
+            p {{ selectedDetail.result.closing }}
+
+        // 연간 타로 (yearly)
+        ng-container(*ngIf="selectedDetail.tarot_type === 'yearly' && selectedDetail.result.results")
+          .profile__detail-multi(*ngFor="let card of selectedDetail.result.results")
+            .profile__detail-card-row
+              img.profile__detail-card-img([src]="'/assets/TarotCard/' + card.card_id + '.jpg'",
+                [class.reversed]="card.is_reversed")
+              .profile__detail-card-info
+                h4 {{ card.season }} · {{ card.card_name }}
+            .profile__detail-section(*ngIf="card.message")
+              p {{ card.message }}
+
+      .profile__detail-no-data(*ngIf="!detailLoading && !selectedDetail.result")
+        p 상세 결과 데이터가 없습니다.

@@ -1,0 +1,12 @@
+{
+    "mode": "page",
+    "id": "page.chat",
+    "title": "Lchat Page",
+    "namespace": "chat",
+    "viewuri": "/Lchat/:page",
+    "category": "",
+    "preview": "/Lchat/user",
+    "controller": "base",
+    "layout": "layout.navbar",
+    "template": "wiz-page-chat([title]=\"\")"
+}

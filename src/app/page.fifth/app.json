@@ -1,0 +1,12 @@
+{
+    "mode": "page",
+    "id": "page.fifth",
+    "title": "tarotT Page",
+    "namespace": "fifth",
+    "viewuri": "/tarotT/:page",
+    "category": "",
+    "preview": "/tarotT/wiz",
+    "controller": "member",
+    "layout": "layout.navbar",
+    "template": "wiz-page-fifth()"
+}

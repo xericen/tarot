@@ -1,0 +1,10 @@
+{
+    "mode": "component",
+    "id": "component.chat",
+    "title": "chat",
+    "namespace": "chat",
+    "viewuri": "chat",
+    "category": "",
+    "controller": "base",
+    "template": "wiz-component-chat()"
+}

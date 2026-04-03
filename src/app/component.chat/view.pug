@@ -1,0 +1,51 @@
+.chat-app
+  .chat-header
+    .chat-header__icon 🔮
+    span.chat-header__title 루카리오 타로 리더
+
+  .chat-body(#chatBody="")
+    .message(*ngFor="let msg of messages", [class]="'message ' + msg.role")
+      ng-container(*ngIf="msg.role === 'bot'")
+        .avatar.bot 🔮
+        .bubble.bot
+          .bubble__text {{ msg.text }}
+          .card-preview(*ngIf="msg.card")
+            .card-preview__reversed(*ngIf="msg.card.is_reversed") Reversed
+            img.card-preview__img([src]="msg.card.image_url",
+              [alt]="msg.card.card_name",
+              [class.reversed]="msg.card.is_reversed")
+            .card-preview__name {{ msg.card.card_name }}
+      ng-container(*ngIf="msg.role === 'user'")
+        .bubble.user {{ msg.text }}
+        .avatar.user 👤
+
+    .message.bot(*ngIf="isLoading")
+      .avatar.bot 🔮
+      .bubble.bot
+        .typing-indicator
+          span
+          span
+          span
+
+  .chat-actions(*ngIf="showDrawButton && !showCardPicker")
+    button.chat-draw-btn((click)="drawCard()") 🃏 카드 뽑기
+
+  .chat-card-picker(*ngIf="showCardPicker")
+    .chat-card-picker__label 좌우로 스크롤하여 마음이 끌리는 카드를 선택하세요
+    .chat-card-picker__scroll
+      .chat-card-picker__card(*ngFor="let cid of pickerCards; let i = index",
+        [class.flipped]="pickerFlipped[i]",
+        [class.selected]="pickerSelected === i",
+        (click)="selectPickerCard(i)")
+        img([src]="pickerFlipped[i] ? '/assets/TarotCard/' + cid + '.jpg' : '/assets/images/CardB.png'",
+          [class.reversed]="pickerFlipped[i] && pickerReversed[i]",
+          alt="타로 카드")
+
+  .chat-footer
+    input.chat-input(#chatInput="",
+      type="text",
+      [(ngModel)]="inputText",
+      (keyup.enter)="sendMessage()",
+      placeholder="메시지를 입력하세요...",
+      [disabled]="isLoading")
+    button.chat-send((click)="sendMessage()", [disabled]="isLoading") ➤

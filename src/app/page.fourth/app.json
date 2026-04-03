@@ -1,0 +1,12 @@
+{
+    "mode": "page",
+    "id": "page.fourth",
+    "title": "tarotP Page",
+    "namespace": "fourth",
+    "viewuri": "/tarotP/:page",
+    "category": "general",
+    "preview": "/tarotP/wiz",
+    "controller": "member",
+    "layout": "layout.navbar",
+    "template": "wiz-page-fourth()"
+}

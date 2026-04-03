@@ -1,0 +1,19 @@
+{
+    "id": "component.nav",
+    "title": "Navigation",
+    "mode": "component",
+    "category": "nav",
+    "namespace": "nav",
+    "controller": "base",
+    "ng.build": {
+        "id": "component.nav",
+        "name": "ComponentNavComponent",
+        "path": "./component.nav/component.nav.component"
+    },
+    "ng": {
+        "selector": "wiz-component-nav",
+        "inputs": [],
+        "outputs": []
+    },
+    "template": "wiz-component-nav()"
+}

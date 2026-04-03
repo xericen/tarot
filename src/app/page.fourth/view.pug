@@ -1,0 +1,115 @@
+.tarot-season
+  // 히어로 (Step 1에서만 표시)
+  .tarot-season__hero(*ngIf="!isResultView && !showCards && !isLoading")
+    .tarot-season__badge SEASON CARD
+    h1.tarot-season__title Season 카드
+    p.tarot-season__desc 마음 속 감정에 집중하면서 신중하게 3장의 카드를 선택해주세요
+    .tarot-season__hero-icon
+      span.tarot-season__hero-emoji 🃏
+
+  // 입력 폼 (Step 1에서만 표시)
+  .tarot-season__form(*ngIf="!isResultView && !showCards && !isLoading")
+    .tarot-season__panel
+      label.tarot-season__label 이름을 입력해주세요
+      input.tarot-season__input(type="text",
+        [(ngModel)]="userName",
+        (input)="service.render()",
+        placeholder="당신의 이름")
+
+      label.tarot-season__label(style="margin-top: 16px;") 고민을 선택해주세요
+      select.tarot-season__input([(ngModel)]="loveStatus",
+        (change)="onLoveStatusChange($event.target.value)",
+        [disabled]="isLocked || !userName")
+        option(value="", disabled="", selected="") 선택하세요
+        option(value="사업운") 사업운
+        option(value="애정운") 애정운
+        option(value="학업운") 학업운
+        option(value="취업운") 취업운
+
+      button.tarot-season__btn--primary(*ngIf="userName && loveStatus && !showCards",
+        (click)="startCardSelection()") 카드 선택하기
+
+  // 카드 영역 (Step 2)
+  .tarot-season__cards(*ngIf="showCards && !isResultView && !isLoading")
+    .tarot-season__user-summary
+      span.tarot-season__user-summary-name {{ userName }}
+      span.tarot-season__user-summary-concern ({{ loveStatus }})
+
+    .tarot-season__toolbar
+      button.tarot-season__btn--secondary((click)="shuffleCards()") 카드 섞기
+
+    .card-container
+      .card-wrapper(*ngFor="let card of tarotCards; let i = index",
+        [class.spread]="isSpread",
+        [class.shuffling]="isShuffling",
+        [class.gathering]="isGathering",
+        [class.selected]="flippedCards[i]",
+        [style.transitionDelay]="isSpread ? (i * 0.02) + 's' : '0s'",
+        (click)="selectCard(i)")
+        img.card([src]="flippedCards[i] ? '/assets/TarotCard/' + card + '.jpg' : getCardBackImage()",
+          [class.reversed]="flippedCards[i] && reversedCards[i]",
+          alt="타로 카드")
+
+    .tarot-season__slots
+      .tarot-season__slot(*ngFor="let slot of [0,1,2]; let i = index")
+        img(*ngIf="selectedCards[i] !== null",
+          [src]="'/assets/TarotCard/' + selectedCards[i]?.toString() + '.jpg'",
+          [class.reversed]="selectedReversed[i]",
+          [alt]="'선택 카드 ' + (i+1)")
+        span.tarot-season__slot-label(*ngIf="selectedCards[i] === null") {{ ['과거','현재','미래'][i] }}
+
+    .tarot-season__confirm(*ngIf="canComplete")
+      button.tarot-season__btn--primary((click)="showFortune()") 운세 확인하기
+
+  // 로딩 화면
+  .tarot-season__loading(*ngIf="isLoading")
+    .tarot-season__loading-spinner
+    p.tarot-season__loading-text 카드를 해석하고 있어요...
+
+  // 결과 화면 — 탭 기반
+  .tarot-season__result(*ngIf="isResultView && !isLoading")
+    .tarot-season__result-header
+      h2.tarot-season__result-title {{ userName }}님의 {{ loveStatus }} 리딩
+
+    // 탭 네비게이션
+    .tarot-season__tabs
+      button.tarot-season__tab(*ngFor="let card of finalCards; let i = index",
+        [class.active]="activeTab === i",
+        (click)="setTab(i)") {{ card.label }}
+
+    // 카드 상세 (활성 탭)
+    .tarot-season__detail(*ngIf="finalCards[activeTab]")
+      .tarot-season__detail-badge {{ finalCards[activeTab].label }}
+      .tarot-season__detail-card-row
+        .tarot-season__detail-img-wrap
+          .tarot-season__reversed-badge(*ngIf="finalCards[activeTab].is_reversed") Reversed
+          img.tarot-season__detail-img([src]="finalCards[activeTab].image_url",
+            [alt]="finalCards[activeTab].card_name",
+            [class.reversed]="finalCards[activeTab].is_reversed")
+        .tarot-season__detail-info
+          h3.tarot-season__detail-name {{ finalCards[activeTab].card_name }}
+          p.tarot-season__detail-subtitle {{ finalCards[activeTab].subtitle }}
+      p.tarot-season__detail-message {{ finalCards[activeTab].message }}
+      .tarot-season__detail-keywords(*ngIf="finalCards[activeTab].keywords?.length")
+        span.tarot-season__keyword(*ngFor="let kw of finalCards[activeTab].keywords") {{ kw }}
+
+    // 전체 흐름 읽기
+    .tarot-season__flow(*ngIf="flowWords?.length")
+      .tarot-season__flow-title ✦ 전체 흐름 읽기
+      .tarot-season__flow-words
+        ng-container(*ngFor="let fw of flowWords; let i = index; let last = last")
+          span.tarot-season__flow-word {{ fw }}
+          span.tarot-season__flow-arrow(*ngIf="!last") →
+
+    // 총평 메시지
+    .tarot-season__closing(*ngIf="closingMessage")
+      .tarot-season__closing-title ✦ {{ userName }}님께 드리는 말
+      p.tarot-season__closing-text {{ closingMessage }}
+
+    .tarot-season__result-action
+      button.tarot-season__btn--secondary((click)="resetSelection()") 다시 보기
+
+    wiz-component-card-chat([cardData]="cardData")
+
+ng-container
+  wiz-component-related

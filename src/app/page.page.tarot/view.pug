@@ -1,0 +1,65 @@
+.tarot-daily
+  // 히어로
+  .tarot-daily__hero(*ngIf="!isCardDrawn && !isLoading")
+    .tarot-daily__badge DAILY TAROT
+    h1.tarot-daily__title 일일 타로
+    h2.tarot-daily__title2 운세
+    .tarot-daily__hero-icon
+      span.tarot-daily__hero-emoji 🔮
+    p.tarot-daily__desc 당신의 하루엔 어떤 기운이 흐를까요?
+    p.tarot-daily__desc2 타로 카드가 그 답을 알고 있어요.
+
+  // 입력 폼
+  .tarot-daily__form(*ngIf="!isCardDrawn && !isLoading")
+    .tarot-daily__panel
+      label.tarot-daily__label 이름을 입력해주세요
+      input.tarot-daily__input(type="text",
+        [(ngModel)]="userName",
+        placeholder="당신의 이름")
+      button.tarot-daily__btn--primary(*ngIf="userName?.trim()",
+        (click)="drawCard()") 카드 뽑기
+
+  // 로딩
+  .tarot-daily__loading(*ngIf="isLoading")
+    .tarot-daily__spinner
+    p 카드를 해석하고 있어요...
+
+  // 결과
+  .tarot-daily__result(*ngIf="isCardDrawn && !isLoading")
+    .tarot-daily__result-card
+      .tarot-daily__reversed-badge(*ngIf="isReversed") Reversed
+      img.tarot-daily__result-img([src]="cardImageUrl", alt="Tarot Card", [class.reversed]="isReversed")
+      h3.tarot-daily__result-name {{ cardName }}
+      p.tarot-daily__result-subtitle(*ngIf="subtitle") {{ subtitle }}
+
+    .tarot-daily__keywords(*ngIf="keywords.length > 0")
+      span.tarot-daily__keyword(*ngFor="let kw of keywords") {{ kw }}
+
+    .tarot-daily__sections
+      .tarot-daily__section(*ngIf="finance")
+        .tarot-daily__section-title 💰 재정운
+        .tarot-daily__section-body {{ finance }}
+
+      .tarot-daily__section(*ngIf="love")
+        .tarot-daily__section-title 💕 애정운
+        .tarot-daily__section-body {{ love }}
+
+      .tarot-daily__section(*ngIf="health")
+        .tarot-daily__section-title 🏃 건강운
+        .tarot-daily__section-body {{ health }}
+
+      .tarot-daily__section(*ngIf="focus")
+        .tarot-daily__section-title 🎯 오늘의 포커스
+        .tarot-daily__section-body {{ focus }}
+
+    .tarot-daily__oneword(*ngIf="oneWord")
+      .tarot-daily__oneword-label ✦ {{ userName }}님께 드리는 한마디
+      p.tarot-daily__oneword-text {{ oneWord }}
+
+    .tarot-daily__action
+      button.tarot-daily__btn--secondary((click)="reset()") 다시 뽑기
+
+    wiz-component-card-chat([cardData]="cardData")
+
+ng-container
+  wiz-component-related
