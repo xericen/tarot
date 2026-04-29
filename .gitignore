@@ -143,3 +143,6 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# RAG vector DB (재생성 가능: python3 scripts/build_rag_db.py)
+/data/rag/

@@ -1,0 +1,22 @@
+{
+    "title": "Diary",
+    "mode": "page",
+    "namespace": "diary",
+    "category": "general",
+    "id": "page.diary",
+    "ng.build": {
+        "id": "page.diary",
+        "name": "PageDiaryComponent",
+        "path": "./page.diary/page.diary.component"
+    },
+    "viewuri": "/diary",
+    "layout": "layout.navbar",
+    "preview": "/diary",
+    "ng": {
+        "selector": "wiz-page-diary",
+        "inputs": [],
+        "outputs": []
+    },
+    "template": "wiz-page-diary()",
+    "controller": "member"
+}

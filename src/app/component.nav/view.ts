@@ -1,10 +1,20 @@
-import { OnInit } from '@angular/core';
+import { OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 
-export class Component implements OnInit {
+declare const wiz: any;
+declare const window: any;
+
+export class Component implements OnInit, OnDestroy {
     public isLoggedIn: boolean = false;
     public userName: string = '';
 
-    constructor() { }
+    private langChangeHandler = () => this.ref.detectChanges();
+
+    constructor(public ref: ChangeDetectorRef) { }
+
+    public t(key: string, fallback?: string): string {
+        if (typeof window.__t === 'function') return window.__t(key, fallback);
+        return fallback != null ? fallback : key;
+    }
 
     async ngOnInit() {
         try {
@@ -14,5 +24,10 @@ export class Component implements OnInit {
                 this.userName = data.name || '';
             }
         } catch (e) { }
+        window.addEventListener('lang:change', this.langChangeHandler);
+    }
+
+    ngOnDestroy() {
+        window.removeEventListener('lang:change', this.langChangeHandler);
     }
 }

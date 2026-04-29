@@ -9,8 +9,10 @@ class Controller(wiz.controller("base")):
         try:
             Users = wiz.model("db/login/users")
             user_id = wiz.session.get("id")
-            Users.get(Users.id == int(user_id))
+            user = Users.get(Users.id == int(user_id))
         except Exception:
-            wiz.session.clear()
-        if not wiz.session.has("id"):
+            try:
+                wiz.session.clear()
+            except Exception:
+                pass
             wiz.response.status(401, message="login required")

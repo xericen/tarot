@@ -1,6 +1,7 @@
 import datetime
 import json as _json
 import json
+import time
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 from google import genai
 
@@ -41,6 +42,23 @@ if not GEMINI_API_KEY:
     except Exception:
         pass
 _ai_client = genai.Client(api_key=GEMINI_API_KEY)
+
+_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite']
+
+def _call_gemini_with_retry(contents, timeout=20):
+    last_error = None
+    for model in _MODELS:
+        for attempt in range(2):
+            try:
+                def _call(m=model):
+                    return _ai_client.models.generate_content(model=m, contents=contents)
+                with ThreadPoolExecutor(max_workers=1) as ex:
+                    return ex.submit(_call).result(timeout=timeout)
+            except Exception as e:
+                last_error = e
+                if attempt < 1:
+                    time.sleep(1)
+    raise last_error
 
 def _save_history(cards_str, summary="", card_ids="", result_data=""):
     try:
@@ -95,10 +113,7 @@ def _get_ai_fortunes_combined(card_info_list, category, user_name):
   ],
   "closing": "3장의 흐름을 하나의 스토리로 엮어 '{user_name}'님께 드리는 감성적인 총평 (2~3문장)"
 }}"""
-        def _call():
-            return _ai_client.models.generate_content(model='gemini-2.5-flash', contents=prompt)
-        with ThreadPoolExecutor(max_workers=1) as ex:
-            response = ex.submit(_call).result(timeout=30)
+        response = _call_gemini_with_retry(prompt, timeout=30)
         text = response.text.strip()
         if "```" in text:
             parts = text.split("```")

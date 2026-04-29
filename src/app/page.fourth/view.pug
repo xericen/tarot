@@ -19,7 +19,7 @@
       label.tarot-season__label(style="margin-top: 16px;") 고민을 선택해주세요
       select.tarot-season__input([(ngModel)]="loveStatus",
         (change)="onLoveStatusChange($event.target.value)",
-        [disabled]="isLocked || !userName")
+        [disabled]="!userName")
         option(value="", disabled="", selected="") 선택하세요
         option(value="사업운") 사업운
         option(value="애정운") 애정운

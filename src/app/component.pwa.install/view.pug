@@ -1,0 +1,9 @@
+div.pwa-install-banner(*ngIf="canInstall && !dismissed && !installed")
+    div.pwa-install-banner__inner
+        img.pwa-install-banner__icon(src="/assets/pwa/icon-192.png", alt="Season Tarot")
+        div.pwa-install-banner__text
+            div.pwa-install-banner__title 앱으로 설치하기
+            div.pwa-install-banner__desc 홈 화면에 추가하면 더 빠르게 이용할 수 있어요
+        div.pwa-install-banner__actions
+            button.pwa-install-banner__btn-install(type="button", (click)="install()") 설치
+            button.pwa-install-banner__btn-dismiss(type="button", (click)="dismiss()", aria-label="닫기") ✕

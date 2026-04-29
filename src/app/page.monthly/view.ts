@@ -44,6 +44,7 @@ export class Component implements OnInit {
     async ngOnInit() {
         await this.service.init();
         if (!await this.service.auth.allow(true, '/login')) return;
+        this.userName = this.service.auth.session.name || '';
         const now = new Date();
         const months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
         this.currentMonth = `${now.getFullYear()}년 ${months[now.getMonth()]}`;
@@ -116,7 +117,7 @@ export class Component implements OnInit {
     }
 
     public async resetSelection(): Promise<void> {
-        this.userName = '';
+        this.userName = this.service.auth.session.name || '';
         this.concern = '';
         this.showCards = false;
         this.isResultView = false;

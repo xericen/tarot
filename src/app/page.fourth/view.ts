@@ -41,13 +41,13 @@ export class Component implements OnInit {
     async ngOnInit() {
         await this.service.init();
         if (!await this.service.auth.allow(true, '/login')) return;
+        this.userName = this.service.auth.session.name || '';
         this.shuffleArray();
         await this.service.render();
     }
 
     public onLoveStatusChange(value: string): void {
         this.loveStatus = value;
-        this.isLocked = true;
     }
 
     public async setTab(index: number) {
@@ -56,7 +56,7 @@ export class Component implements OnInit {
     }
 
     public async resetSelection(): Promise<void> {
-        this.userName = '';
+        this.userName = this.service.auth.session.name || '';
         this.loveStatus = '';
         this.isLocked = false;
         this.showCards = false;

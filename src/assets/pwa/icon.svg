@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2A1B4E"/>
+      <stop offset="55%" stop-color="#4A2B8E"/>
+      <stop offset="100%" stop-color="#6B46C1"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FBE49A"/>
+      <stop offset="100%" stop-color="#FBBF24"/>
+    </linearGradient>
+    <linearGradient id="cardSide" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#C4B5FD"/>
+      <stop offset="100%" stop-color="#8B5CF6"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#FBBF24" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#FBBF24" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 배경 (둥근 사각형) -->
+  <rect width="512" height="512" rx="96" ry="96" fill="url(#bg)"/>
+
+  <!-- 빛 글로우 -->
+  <circle cx="256" cy="256" r="220" fill="url(#glow)"/>
+
+  <!-- 별 데코 -->
+  <g fill="#FFFFFF" opacity="0.55">
+    <circle cx="80" cy="110" r="2.5"/>
+    <circle cx="430" cy="90" r="3.2"/>
+    <circle cx="120" cy="420" r="2.2"/>
+    <circle cx="410" cy="420" r="2.8"/>
+    <circle cx="360" cy="160" r="1.8"/>
+    <circle cx="150" cy="180" r="1.6"/>
+    <circle cx="100" cy="300" r="2"/>
+    <circle cx="430" cy="320" r="1.8"/>
+  </g>
+
+  <!-- 좌측 카드 (역방향 회전) -->
+  <g transform="translate(180 268) rotate(-18) translate(-70 -120)">
+    <rect x="0" y="0" width="140" height="240" rx="14" ry="14" fill="url(#cardSide)" stroke="#FFFFFF" stroke-width="3"/>
+    <rect x="10" y="10" width="120" height="220" rx="8" ry="8" fill="none" stroke="#FFFFFF" stroke-width="1.5" opacity="0.55"/>
+    <!-- 별 (좌측 카드 중앙) -->
+    <path d="M70 80 L78 108 L108 108 L84 126 L92 154 L70 138 L48 154 L56 126 L32 108 L62 108 Z" fill="#FBBF24"/>
+    <text x="70" y="200" text-anchor="middle" font-family="Georgia, serif" font-size="22" fill="#FFFFFF" opacity="0.85">★</text>
+  </g>
+
+  <!-- 우측 카드 (정방향 회전) -->
+  <g transform="translate(332 268) rotate(18) translate(-70 -120)">
+    <rect x="0" y="0" width="140" height="240" rx="14" ry="14" fill="url(#cardSide)" stroke="#FFFFFF" stroke-width="3"/>
+    <rect x="10" y="10" width="120" height="220" rx="8" ry="8" fill="none" stroke="#FFFFFF" stroke-width="1.5" opacity="0.55"/>
+    <!-- 달 (우측 카드) -->
+    <circle cx="70" cy="120" r="34" fill="#FBE49A"/>
+    <circle cx="80" cy="116" r="28" fill="url(#cardSide)"/>
+  </g>
+
+  <!-- 중앙 메인 카드 -->
+  <g transform="translate(256 256) translate(-90 -130)">
+    <rect x="0" y="0" width="180" height="260" rx="18" ry="18" fill="url(#card)" stroke="#FFFFFF" stroke-width="4"/>
+    <rect x="10" y="10" width="160" height="240" rx="10" ry="10" fill="none" stroke="#2A1B4E" stroke-width="2" opacity="0.35"/>
+    <!-- 큰 별 (메인) -->
+    <path d="M90 60
+             L104 102
+             L148 102
+             L114 128
+             L128 170
+             L90 144
+             L52 170
+             L66 128
+             L32 102
+             L76 102 Z"
+          fill="#2A1B4E"/>
+    <!-- 카드 텍스트 -->
+    <text x="90" y="220" text-anchor="middle" font-family="Georgia, serif" font-size="22" font-weight="bold" fill="#2A1B4E">TAROT</text>
+  </g>
+</svg>

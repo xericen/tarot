@@ -2,6 +2,7 @@ import datetime
 import json as _json
 import json
 import random
+import time
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 from peewee import fn
 from google import genai
@@ -42,6 +43,23 @@ if not GEMINI_API_KEY:
         pass
 _ai_client = genai.Client(api_key=GEMINI_API_KEY)
 
+_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite']
+
+def _call_gemini_with_retry(contents, timeout=20):
+    last_error = None
+    for model in _MODELS:
+        for attempt in range(2):
+            try:
+                def _call(m=model):
+                    return _ai_client.models.generate_content(model=m, contents=contents)
+                with ThreadPoolExecutor(max_workers=1) as ex:
+                    return ex.submit(_call).result(timeout=timeout)
+            except Exception as e:
+                last_error = e
+                if attempt < 1:
+                    time.sleep(1)
+    raise last_error
+
 def _save_history(cards_str, summary="", card_ids="", result_data=""):
     try:
         session = wiz.model("portal/season/session").use()
@@ -54,12 +72,25 @@ def _save_history(cards_str, summary="", card_ids="", result_data=""):
 
 def _get_ai_fortune(card_name, user_name, is_reversed=False):
     try:
+        i18n = wiz.model("i18n")
+        lang_label = i18n["lang_label"]()
+        lang_instruction = i18n["lang_instruction"]()
+        # RAG 컨텍스트 (DB 미구축 시 빈 문자열)
+        try:
+            rag = wiz.model("rag")
+            rag_context = rag["build_context"]([card_name], "오늘의 운세 해석")
+        except Exception:
+            rag_context = ""
         reversed_text = "(역방향/Reversed)" if is_reversed else "(정방향/Upright)"
         reversed_instruction = ""
         if is_reversed:
             reversed_instruction = "\n이 카드는 역방향(Reversed)으로 나왔습니다. 역방향의 의미를 반영하여 해석해주세요. 역방향은 카드의 긍정적 에너지가 억압되거나 내면으로 향하는 것을 의미합니다."
         prompt = f"""당신은 전문 타로 리더입니다. '{user_name}'님이 일일 타로에서 '{card_name}' 카드를 뽑았습니다. {reversed_text}{reversed_instruction}
-이 카드의 의미와 상징을 바탕으로 오늘의 운세를 한국어로 섹션별로 구체적으로 알려주세요.
+이 카드의 의미와 상징을 바탕으로 오늘의 운세를 섹션별로 구체적으로 알려주세요.
+{rag_context}
+⚠️ 출력 언어: {lang_label}
+{lang_instruction}
+JSON 키 이름(subtitle, finance, love, health, focus, keywords, one_word)은 영문 그대로 두고, 값(value)만 위 언어로 작성하세요.
 
 반드시 아래 JSON 형식으로만 응답하세요 (다른 텍스트 없이 JSON만):
 {{
@@ -71,14 +102,7 @@ def _get_ai_fortune(card_name, user_name, is_reversed=False):
   "keywords": ["키워드1", "키워드2", "키워드3", "키워드4"],
   "one_word": "{user_name}님께 드리는 오늘의 한마디 (임팩트 있는 2~3문장, 감성적으로)"
 }}"""
-        def _call_gemini():
-            return _ai_client.models.generate_content(
-                model='gemini-2.5-flash',
-                contents=prompt
-            )
-        with ThreadPoolExecutor(max_workers=1) as executor:
-            future = executor.submit(_call_gemini)
-            response = future.result(timeout=20)
+        response = _call_gemini_with_retry(prompt, timeout=20)
         text = response.text.strip()
         if "```" in text:
             lines = text.split("```")

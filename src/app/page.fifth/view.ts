@@ -37,6 +37,7 @@ export class Component implements OnInit {
   async ngOnInit() {
     await this.service.init();
     if (!await this.service.auth.allow(true, '/login')) return;
+    this.userName = this.service.auth.session.name || '';
     this.shuffleArray();
     await this.service.render();
   }
@@ -109,6 +110,7 @@ export class Component implements OnInit {
     }
     this.selectedReversed = this.reversedCards[cardIndex];
     this.canComplete = true;
+    this.service.render();
   }
 
   get cardData() {
@@ -124,7 +126,7 @@ export class Component implements OnInit {
     this.isResultView = false;
     this.showCards = false;
     this.cardInfo = null;
-    this.userName = '';
+    this.userName = this.service.auth.session.name || '';
     this.selectedCard = null;
     this.selectedReversed = false;
     this.canComplete = false;

@@ -1,11 +1,74 @@
 doctype html
-html(lang="en")
+html(lang="ko")
     head
         meta(charset="utf-8")
-        title Wiz Angular Sample
+        title Season Tarot — AI 타로 운세
         base(href="/")
-        meta(name="viewport", content="width=device-width, initial-scale=1")
+        meta(name="viewport", content="width=device-width, initial-scale=1, viewport-fit=cover")
+        meta(name="description", content="Google Gemini 기반 대화형 AI 타로 리딩. 일일·월간·연간·시즌·AI 채팅 5종 모드.")
+
+        // PWA 매니페스트
+        link(rel="manifest", href="/manifest.json")
+        meta(name="theme-color", content="#2A1B4E")
+        meta(name="background-color", content="#2A1B4E")
+
+        // iOS Safari PWA 지원
+        meta(name="apple-mobile-web-app-capable", content="yes")
+        meta(name="apple-mobile-web-app-status-bar-style", content="black-translucent")
+        meta(name="apple-mobile-web-app-title", content="Season Tarot")
+        link(rel="apple-touch-icon", href="/assets/pwa/icon-180.png")
+
+        // 아이콘
+        link(rel="icon", type="image/svg+xml", href="/assets/pwa/icon.svg")
+        link(rel="icon", type="image/png", sizes="192x192", href="/assets/pwa/icon-192.png")
+        link(rel="icon", type="image/png", sizes="512x512", href="/assets/pwa/icon-512.png")
         link(rel="shortcut icon", href="/assets/favicon.ico")
+
+        // Open Graph (소셜 공유)
+        meta(property="og:type", content="website")
+        meta(property="og:title", content="Season Tarot — AI 타로 운세")
+        meta(property="og:description", content="Google Gemini 기반 대화형 AI 타로 리딩. 일일·월간·연간·시즌·AI 채팅 5종 모드.")
+        meta(property="og:image", content="/assets/pwa/icon-512.png")
+
+        // i18n (Angular 부트 전에 로드되어야 window.__t 사용 가능)
+        script(src="/assets/i18n/i18n.js")
 
     body
         app-root
+
+        // PWA Service Worker 등록
+        script.
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function () {
+                    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                        .then(function (reg) {
+                            console.log('[PWA] Service Worker registered:', reg.scope);
+                            reg.addEventListener('updatefound', function () {
+                                var nw = reg.installing;
+                                if (!nw) return;
+                                nw.addEventListener('statechange', function () {
+                                    if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+                                        console.log('[PWA] New version available');
+                                    }
+                                });
+                            });
+                        })
+                        .catch(function (err) {
+                            console.warn('[PWA] Service Worker registration failed:', err);
+                        });
+                });
+            }
+
+            window.__pwaInstallPrompt = null;
+            window.addEventListener('beforeinstallprompt', function (e) {
+                e.preventDefault();
+                window.__pwaInstallPrompt = e;
+                window.dispatchEvent(new CustomEvent('pwa:installable'));
+                console.log('[PWA] Install prompt ready');
+            });
+
+            window.addEventListener('appinstalled', function () {
+                window.__pwaInstallPrompt = null;
+                window.dispatchEvent(new CustomEvent('pwa:installed'));
+                console.log('[PWA] App installed');
+            });

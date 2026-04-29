@@ -1,5 +1,6 @@
 # DB: tarot_cards(id, name, description)
 import json
+import time
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 from google import genai
 
@@ -14,6 +15,23 @@ if not GEMINI_API_KEY:
     except Exception:
         pass
 _ai_client = genai.Client(api_key=GEMINI_API_KEY)
+
+_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite']
+
+def _call_gemini_with_retry(contents, timeout=20):
+    last_error = None
+    for model in _MODELS:
+        for attempt in range(2):
+            try:
+                def _call(m=model):
+                    return _ai_client.models.generate_content(model=m, contents=contents)
+                with ThreadPoolExecutor(max_workers=1) as ex:
+                    return ex.submit(_call).result(timeout=timeout)
+            except Exception as e:
+                last_error = e
+                if attempt < 1:
+                    time.sleep(1)
+    raise last_error
 
 import json as _json
 
@@ -67,10 +85,7 @@ def _get_ai_fortune_today(card_name, is_reversed=False, user_name=""):
   "lucky_color": "행운의 색 (한 가지, 한국어로)",
   "lucky_tip": "오늘 하루를 위한 행운의 팁 (1~2문장)"
 }}"""
-        def _call():
-            return _ai_client.models.generate_content(model='gemini-2.5-flash', contents=prompt)
-        with ThreadPoolExecutor(max_workers=1) as ex:
-            response = ex.submit(_call).result(timeout=20)
+        response = _call_gemini_with_retry(prompt, timeout=20)
         text = response.text.strip()
         if text.startswith("```"):
             text = text.split("\n", 1)[1] if "\n" in text else text[3:]

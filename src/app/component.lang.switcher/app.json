@@ -1,0 +1,19 @@
+{
+    "id": "component.lang.switcher",
+    "title": "Language Switcher",
+    "mode": "component",
+    "category": "i18n",
+    "namespace": "lang.switcher",
+    "controller": "base",
+    "ng.build": {
+        "id": "component.lang.switcher",
+        "name": "ComponentLangSwitcherComponent",
+        "path": "./component.lang.switcher/component.lang.switcher.component"
+    },
+    "ng": {
+        "selector": "wiz-component-lang-switcher",
+        "inputs": [],
+        "outputs": []
+    },
+    "template": "wiz-component-lang-switcher()"
+}

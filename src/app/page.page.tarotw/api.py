@@ -1,6 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 from google import genai
 import json
+import time
 
 import os
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
@@ -11,6 +12,23 @@ if not GEMINI_API_KEY:
     except Exception:
         pass
 _ai_client = genai.Client(api_key=GEMINI_API_KEY)
+
+_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite']
+
+def _call_gemini_with_retry(contents, timeout=20):
+    last_error = None
+    for model in _MODELS:
+        for attempt in range(2):
+            try:
+                def _call(m=model):
+                    return _ai_client.models.generate_content(model=m, contents=contents)
+                with ThreadPoolExecutor(max_workers=1) as ex:
+                    return ex.submit(_call).result(timeout=timeout)
+            except Exception as e:
+                last_error = e
+                if attempt < 1:
+                    time.sleep(1)
+    raise last_error
 
 def _save_history(cards_str, summary="", card_ids="", result_data=""):
     try:
@@ -96,10 +114,7 @@ def yearly_fortune():
 
 반드시 아래 JSON 배열 형식으로만 응답하세요. 다른 텍스트 없이 JSON만 출력하세요:
 [{{"season":"봄","message":"운세 내용"}},{{"season":"여름","message":"운세 내용"}},{{"season":"가을","message":"운세 내용"}},{{"season":"겨울","message":"운세 내용"}}]"""
-        def _call():
-            return _ai_client.models.generate_content(model='gemini-2.5-flash', contents=prompt)
-        with ThreadPoolExecutor(max_workers=1) as ex:
-            response = ex.submit(_call).result(timeout=20)
+        response = _call_gemini_with_retry(prompt, timeout=20)
         raw = response.text.strip()
         # JSON 블록 추출
         if "```" in raw:

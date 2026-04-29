@@ -38,12 +38,13 @@ export class Component implements OnInit {
     async ngOnInit() {
         await this.service.init();
         if (!await this.service.auth.allow(true, '/login')) return;
+        this.userName = this.service.auth.session.name || '';
         this.shuffleArray();
         await this.service.render();
     }
 
     async resetSelection(): Promise<void> {
-        this.userName = '';
+        this.userName = this.service.auth.session.name || '';
         this.loveStatus = '';
         this.jobStatus = '';
         this.isLocked = false;

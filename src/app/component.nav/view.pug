@@ -1,8 +1,12 @@
 .app-nav
   a.app-nav__home([routerLink]="isLoggedIn ? '/main/user' : '/login'")
-    img.app-nav__logo(src="/assets/images/tarot.png", alt="SeasonTarot")
-    span.app-nav__brand SeasonTarot
+    img.app-nav__logo(src="/assets/images/Main.png", alt="SeasonTarot")
+    span.app-nav__brand {{ t('app.brand') }}
   .app-nav__actions
+    a.app-nav__menu(*ngIf="isLoggedIn", routerLink="/diary", title="Diary")
+      span 📔
+      span.app-nav__menu-label {{ t('nav.diary', '다이어리') }}
+    wiz-component-lang-switcher
     a.app-nav__user(*ngIf="isLoggedIn", routerLink="/profile")
       span.app-nav__user-name {{ userName }}
       svg(xmlns="http://www.w3.org/2000/svg", width="18", height="18", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2", stroke-linecap="round", stroke-linejoin="round")

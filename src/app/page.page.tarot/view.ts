@@ -22,6 +22,7 @@ export class Component implements OnInit {
   async ngOnInit() {
     await this.service.init();
     if (!await this.service.auth.allow(true, '/login')) return;
+    this.userName = this.service.auth.session.name || '';
     await this.service.render();
   }
 
@@ -80,6 +81,7 @@ export class Component implements OnInit {
     this.focus = '';
     this.keywords = [];
     this.oneWord = '';
+    this.userName = this.service.auth.session.name || '';
     this.service.render();
   }
 }

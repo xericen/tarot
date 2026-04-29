@@ -1,4 +1,5 @@
 import json
+import time
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 from google import genai
 
@@ -11,6 +12,23 @@ if not GEMINI_API_KEY:
     except Exception:
         pass
 _ai_client = genai.Client(api_key=GEMINI_API_KEY)
+
+_MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite']
+
+def _call_gemini_with_retry(contents, timeout=20):
+    last_error = None
+    for model in _MODELS:
+        for attempt in range(2):
+            try:
+                def _call(m=model):
+                    return _ai_client.models.generate_content(model=m, contents=contents)
+                with ThreadPoolExecutor(max_workers=1) as ex:
+                    return ex.submit(_call).result(timeout=timeout)
+            except Exception as e:
+                last_error = e
+                if attempt < 1:
+                    time.sleep(1)
+    raise last_error
 
 SYSTEM_PROMPT = """당신은 타로 카드 전문 상담사입니다.
 사용자가 방금 뽑은 타로 카드가 있으며, 이 카드에 대해 더 깊은 질문을 합니다.
@@ -65,10 +83,7 @@ def chat():
     contents.append({"role": "user", "parts": [{"text": message}]})
 
     try:
-        def _call():
-            return _ai_client.models.generate_content(model='gemini-2.5-flash', contents=contents)
-        with ThreadPoolExecutor(max_workers=1) as ex:
-            response = ex.submit(_call).result(timeout=20)
+        response = _call_gemini_with_retry(contents, timeout=20)
         reply = response.text.strip()
     except FuturesTimeoutError:
         reply = "응답 시간이 초과됐어요. 잠시 후 다시 질문해 주세요 🔮"

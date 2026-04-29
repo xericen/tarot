@@ -1,0 +1,19 @@
+{
+    "id": "component.pwa.install",
+    "title": "PWA Install Banner",
+    "mode": "component",
+    "category": "pwa",
+    "namespace": "pwa.install",
+    "controller": "base",
+    "ng.build": {
+        "id": "component.pwa.install",
+        "name": "ComponentPwaInstallComponent",
+        "path": "./component.pwa.install/component.pwa.install.component"
+    },
+    "ng": {
+        "selector": "wiz-component-pwa-install",
+        "inputs": [],
+        "outputs": []
+    },
+    "template": "wiz-component-pwa-install()"
+}

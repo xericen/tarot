@@ -1,0 +1,126 @@
+.diary-page
+    .diary-container(*ngIf="loaded")
+        //- ============ 목록 모드 ============
+        div(*ngIf="mode === 'list'")
+            .diary-header
+                .diary-header__left
+                    h1.diary-title 📔 {{ t('diary.title', '나의 다이어리') }}
+                    p.diary-desc {{ t('diary.desc', 'AI가 감정을 분석해 마음의 흐름을 함께 정리해드려요.') }}
+                button.btn-primary(type="button", (click)="openWrite()")
+                    span ✏️ {{ t('diary.action.new', '새 다이어리') }}
+
+            //- 통계 카드
+            .diary-stats(*ngIf="stats?.total > 0")
+                .stat-title {{ t('diary.stats.title', '최근 90일 감정 분포') }} ({{ stats.total }})
+                .stat-bars
+                    div.stat-row(*ngFor="let key of statKeys()")
+                        .stat-row__label {{ sentimentLabel(key) }}
+                        .stat-row__bar
+                            .stat-row__fill(class="rounded-full",
+                                [style.width]="statBarWidth(key)",
+                                [style.background]="sentimentColor(key)")
+                        .stat-row__count {{ stats.counts[key] }}
+
+            //- 다이어리 카드 그리드
+            .diary-empty(*ngIf="items.length === 0")
+                .empty-emoji 📖
+                p {{ t('diary.empty', '아직 작성한 다이어리가 없어요. 첫 번째 마음을 적어볼까요?') }}
+                button.btn-primary(type="button", (click)="openWrite()")
+                    span ✏️ {{ t('diary.action.new', '새 다이어리') }}
+
+            .diary-grid(*ngIf="items.length > 0")
+                .diary-card(*ngFor="let it of items", (click)="openDetail(it.diary_id)")
+                    .diary-card__date
+                        span.date {{ it.diary_date }}
+                        span.mood-emoji(*ngIf="it.mood") {{ moodEmoji(it.mood) }}
+                        span.sentiment-badge(*ngIf="it.sentiment", [style.background]="sentimentColor(it.sentiment)")
+                            | {{ sentimentLabel(it.sentiment) }}
+                    h3.diary-card__title {{ it.title }}
+                    p.diary-card__summary(*ngIf="it.ai_summary") 💡 {{ it.ai_summary }}
+                    p.diary-card__content {{ it.content?.length > 80 ? (it.content.slice(0, 80) + '...') : it.content }}
+                    .diary-card__related(*ngIf="it.related_tarot")
+                        span.tarot-badge 🎴 {{ it.related_tarot.tarot_type }} · {{ it.related_tarot.cards }}
+
+        //- ============ 작성/수정 모드 ============
+        div(*ngIf="mode === 'write'")
+            .diary-form
+                .form-header
+                    button.btn-back(type="button", (click)="openList()") ← {{ t('common.back', '뒤로') }}
+                    h2 {{ form.diary_id ? t('diary.edit', '다이어리 수정') : t('diary.new', '새 다이어리') }}
+
+                .form-row
+                    label {{ t('diary.field.date', '날짜') }}
+                    input(type="date", [(ngModel)]="form.diary_date", class="form-input")
+
+                .form-row
+                    label {{ t('diary.field.title', '제목') }}
+                    input(type="text",
+                        [(ngModel)]="form.title",
+                        class="form-input",
+                        [placeholder]="t('diary.field.title_ph', '오늘의 한 줄 제목')")
+
+                .form-row
+                    label {{ t('diary.field.mood', '기분') }}
+                    .mood-options
+                        button.mood-btn(type="button",
+                            *ngFor="let m of moodOptions",
+                            [class.active]="form.mood === m.key",
+                            (click)="selectMood(m.key)")
+                            | {{ m.emoji }}
+
+                .form-row
+                    label {{ t('diary.field.content', '내용') }}
+                    textarea([(ngModel)]="form.content",
+                        class="form-input form-textarea",
+                        rows="10",
+                        [placeholder]="t('diary.field.content_ph', '오늘 어떤 일이 있었나요? 어떤 감정을 느꼈나요?')")
+
+                .form-row(*ngIf="recentTarots.length > 0")
+                    label {{ t('diary.field.related', '관련 타로 기록 (선택)') }}
+                    .tarot-options
+                        button.tarot-opt(type="button",
+                            *ngFor="let t of recentTarots",
+                            [class.active]="String(form.related_draw_id) === String(t.id)",
+                            (click)="selectTarot(t.id)")
+                            .tarot-opt__type {{ t.tarot_type }} · {{ t.created_at }}
+                            .tarot-opt__cards {{ t.cards }}
+
+                .form-actions
+                    button.btn-secondary(type="button", (click)="openList()") {{ t('common.cancel', '취소') }}
+                    button.btn-primary(type="button", (click)="submit()", [disabled]="saving")
+                        span(*ngIf="!saving") 💫 {{ t('diary.action.save_with_ai', '저장 + AI 감정 분석') }}
+                        span(*ngIf="saving") {{ t('common.saving', '저장 중...') }}
+
+        //- ============ 상세 모드 ============
+        div(*ngIf="mode === 'detail' && detailItem")
+            .diary-detail
+                .form-header
+                    button.btn-back(type="button", (click)="openList()") ← {{ t('common.back', '뒤로') }}
+                    .detail-actions
+                        button.btn-secondary(type="button", (click)="editDetail()") ✏️ {{ t('common.edit', '수정') }}
+                        button.btn-danger(type="button", (click)="deleteDetail()") 🗑 {{ t('common.delete', '삭제') }}
+
+                .detail-meta
+                    span.date {{ detailItem.diary_date }}
+                    span.mood-emoji(*ngIf="detailItem.mood") {{ moodEmoji(detailItem.mood) }}
+                    span.sentiment-badge(*ngIf="detailItem.sentiment", [style.background]="sentimentColor(detailItem.sentiment)")
+                        | {{ sentimentLabel(detailItem.sentiment) }}
+
+                h1.detail-title {{ detailItem.title }}
+
+                .ai-card(*ngIf="detailItem.ai_summary")
+                    .ai-card__head ✨ {{ t('diary.ai.summary', 'AI 한 줄 요약') }}
+                    p.ai-card__body {{ detailItem.ai_summary }}
+                    .ai-card__score(*ngIf="detailItem.sentiment_score !== null && detailItem.sentiment_score !== undefined")
+                        .score-label {{ t('diary.ai.score', '감정 점수') }}: {{ (detailItem.sentiment_score * 100).toFixed(0) }}%
+                        .score-bar
+                            .score-fill(class="rounded-full",
+                                [style.width]="scoreToWidth(detailItem.sentiment_score)",
+                                [style.background]="sentimentColor(detailItem.sentiment)")
+
+                .detail-content(style="white-space: pre-wrap") {{ detailItem.content }}
+
+                .related-tarot(*ngIf="detailItem.related_tarot")
+                    h3 🎴 {{ t('diary.related_tarot', '관련 타로 기록') }}
+                    p.tarot-line {{ detailItem.related_tarot.tarot_type }} · {{ detailItem.related_tarot.cards }}
+                    p.tarot-summary(*ngIf="detailItem.related_tarot.result_summary") {{ detailItem.related_tarot.result_summary }}

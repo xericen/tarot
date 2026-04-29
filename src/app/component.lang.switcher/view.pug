@@ -1,0 +1,14 @@
+.lang-switcher
+  button.lang-switcher__trigger(type="button", (click)="toggle($event)", [class.is-open]="open", aria-haspopup="true", [attr.aria-expanded]="open")
+    span.lang-switcher__flag {{ currentLabel }}
+    span.lang-switcher__code {{ currentCode }}
+    svg.lang-switcher__chevron(xmlns="http://www.w3.org/2000/svg", width="12", height="12", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="2.5", stroke-linecap="round", stroke-linejoin="round")
+      polyline(points="6 9 12 15 18 9")
+
+  ul.lang-switcher__menu(*ngIf="open", role="menu", (click)="$event.stopPropagation()")
+    li.lang-switcher__item(*ngFor="let l of langs", role="menuitem")
+      button.lang-switcher__btn(type="button", (click)="select(l.code, $event)", [class.is-active]="l.code === current")
+        span.lang-switcher__btn-flag {{ l.flag }}
+        span.lang-switcher__btn-label {{ l.label }}
+        svg.lang-switcher__btn-check(*ngIf="l.code === current", xmlns="http://www.w3.org/2000/svg", width="14", height="14", viewBox="0 0 24 24", fill="none", stroke="currentColor", stroke-width="3", stroke-linecap="round", stroke-linejoin="round")
+          polyline(points="20 6 9 17 4 12")
